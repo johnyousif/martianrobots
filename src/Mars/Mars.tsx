@@ -39,6 +39,7 @@ export const Mars: React.FC<IStateProps & IDispatchProps> = ({
   const onClickExecuteRobotInstructions = () => {
     getOutputMovements(encodeURI(robotInstructions));
   };
+  
   return (
     <Container>
       <InstructionInput
