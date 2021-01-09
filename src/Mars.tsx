@@ -1,5 +1,13 @@
 import React, { useState } from 'react';
+import { connect } from 'react-redux';
+import { Dispatch } from 'redux';
 import styled from 'styled-components';
+import { createGetOutputMovementsRequestedAction } from './redux/actionCreators';
+import { RootState } from './redux/root';
+import {
+  getOutputMovements,
+  getOutputMovementsError,
+} from './redux/selectors/movement';
 
 const Container = styled.div`
   display: flex;
@@ -9,116 +17,44 @@ const Container = styled.div`
 
 const InstructionInput = styled.textarea`
   width: 50vw;
-  height: 50vh;
+  height: 25vh;
   resize: none;
   margin-bottom: 20px;
+  padding: 10px;
 `;
 
-interface IProps {}
+const Output = styled.div`
+  width: 50vw;
+  height: 25vh;
+  margin-top: 20px;
+  padding: 10px;
+  background: #000000;
+  color: #ffffff;
+  white-space: pre-wrap;
+`;
 
-const Mars: React.FC<IProps> = () => {
+const Error = styled.p`
+  font-size: 20px;
+  font-weight: bold;
+  margin-top: 20px;
+  color: red;
+`;
+
+interface IStateProps {
+  outputMovements: string;
+  outputMovementsError?: string;
+}
+
+interface IDispatchProps {
+  getOutputMovements: (inputMovements: string) => void;
+}
+
+const Mars: React.FC<IStateProps & IDispatchProps> = ({
+  outputMovements,
+  outputMovementsError,
+  getOutputMovements,
+}) => {
   const [robotInstructions, setRobotInstructions] = useState<string>('');
-  const [movementOutput, updateMovementOutput] = useState<string[]>([]);
-    const lostRobotCoordinates: number[][] = [];
-
-  const dothis = () => {
-    const instructionSplit = robotInstructions.split('\n');
-    const upperRightCoordinates = getCoordinates(instructionSplit[0]);
-    const instructions = instructionSplit.slice(1, instructionSplit.length);
-    instructions.forEach((instructionItem: string, index: number) => {
-      if (index % 3 === 0) {
-        updateMovementOutput([
-          ...movementOutput,
-          getMovement(
-            instructionItem,
-            instructions[index + 1],
-            upperRightCoordinates
-          ),
-        ]);
-      }
-    });
-  };
-
-  const getMovement = (
-    startPosition: string,
-    movementString: string,
-    upperRightCoordinates: number[]
-  ): string => {
-    let currentPositionCoordinates = getCoordinates(startPosition.slice(0, 3));
-    let positionIncrement =
-      directionIncrements[startPosition[startPosition.length - 1]];
-    let positionIncrementIndex = Object.keys(directionIncrements).indexOf(
-      startPosition[startPosition.length - 1]
-    );
-    for (const movementEntry of movementString.split('')) {
-      if (movementEntry === 'L') {
-        positionIncrementIndex =
-          positionIncrementIndex === 0
-            ? Object.keys(directionIncrements).length - 1
-            : positionIncrementIndex - 1;
-        positionIncrement =
-          directionIncrements[
-            Object.keys(directionIncrements)[positionIncrementIndex]
-          ];
-      }
-      if (movementEntry === 'R') {
-        positionIncrementIndex =
-          positionIncrementIndex === Object.keys(directionIncrements).length - 1
-            ? 0
-            : positionIncrementIndex + 1;
-        positionIncrement =
-          directionIncrements[
-            Object.keys(directionIncrements)[positionIncrementIndex]
-          ];
-      }
-      if (movementEntry === 'F') {
-        const nextPositionCoordinates = [
-          currentPositionCoordinates[0] + positionIncrement[0],
-          currentPositionCoordinates[1] + positionIncrement[1],
-        ];
-        if (
-          nextPositionCoordinates[0] > upperRightCoordinates[0] ||
-          nextPositionCoordinates[1] > upperRightCoordinates[1]
-        ) {
-          if (
-            !lostRobotCoordinates.some(
-              (lostRobotCoordinate: number[]) =>
-                lostRobotCoordinate[0] === currentPositionCoordinates[0] &&
-                lostRobotCoordinate[1] === currentPositionCoordinates[1]
-            )
-          ) {
-            lostRobotCoordinates.push([
-              currentPositionCoordinates[0],
-              currentPositionCoordinates[1],
-            ]);
-            break;
-          }
-        } else {
-          currentPositionCoordinates = nextPositionCoordinates;
-        }
-      }
-    }
-    console.log(
-      currentPositionCoordinates,
-      Object.keys(directionIncrements)[positionIncrementIndex]
-    );
-    return '';
-  };
-
-  const directionIncrements: { [key: string]: number[] } = {
-    N: [0, 1],
-    E: [1, 0],
-    S: [0, -1],
-    W: [-1, 0],
-  };
-
-  const getCoordinates = (coordinateString: string): number[] => {
-    const coordinateStringArray = coordinateString.split(' ');
-    return [
-      parseInt(coordinateStringArray[0]),
-      parseInt(coordinateStringArray[1]),
-    ];
-  };
 
   const onChangeRobotInstructions = (
     e: React.ChangeEvent<HTMLTextAreaElement>
@@ -127,12 +63,12 @@ const Mars: React.FC<IProps> = () => {
   };
 
   const onClickExecuteRobotInstructions = () => {
-    dothis();
+    getOutputMovements(encodeURI(robotInstructions));
   };
-
   return (
     <Container>
       <InstructionInput
+        placeholder="Enter input instructions here..."
         onChange={onChangeRobotInstructions}
         value={robotInstructions}
       />
@@ -142,9 +78,20 @@ const Mars: React.FC<IProps> = () => {
       >
         Execute robot instructions
       </button>
-      <div>{movementOutput}</div>
+      <Output>{outputMovements || 'Output will appear here...'}</Output>
+      {outputMovementsError && <Error>{outputMovementsError}</Error>}
     </Container>
   );
 };
 
-export default Mars;
+const mapStateToProps = (state: RootState): IStateProps => ({
+  outputMovements: getOutputMovements(state),
+  outputMovementsError: getOutputMovementsError(state),
+});
+
+const mapDispatchToProps = (dispatch: Dispatch): IDispatchProps => ({
+  getOutputMovements: (inputMovements: string) =>
+    dispatch(createGetOutputMovementsRequestedAction(inputMovements)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Mars);

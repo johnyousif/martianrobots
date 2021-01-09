@@ -1,5 +1,12 @@
-import React from "react";
-import ReactDOM from "react-dom";
-import Mars from "./Mars";
+import React from 'react';
+import ReactDOM from 'react-dom';
+import store from './redux/store';
+import Mars from './Mars';
+import { Provider } from 'react-redux';
 
-ReactDOM.render(<Mars />, document.getElementById("root"));
+ReactDOM.render(
+  <Provider store={store()}>
+    <Mars />
+  </Provider>,
+  document.getElementById('root')
+);
