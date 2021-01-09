@@ -1,44 +1,18 @@
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
-import styled from 'styled-components';
-import { createGetOutputMovementsRequestedAction } from './redux/actionCreators';
-import { RootState } from './redux/root';
+import {
+  Container,
+  InstructionInput,
+  Output,
+  OutputError,
+} from './Mars.styles';
+import { createGetOutputMovementsRequestedAction } from '../redux/actionCreators';
+import { RootState } from '../redux/root';
 import {
   getOutputMovements,
   getOutputMovementsError,
-} from './redux/selectors/movement';
-
-const Container = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-`;
-
-const InstructionInput = styled.textarea`
-  width: 50vw;
-  height: 25vh;
-  resize: none;
-  margin-bottom: 20px;
-  padding: 10px;
-`;
-
-const Output = styled.div`
-  width: 50vw;
-  height: 25vh;
-  margin-top: 20px;
-  padding: 10px;
-  background: #000000;
-  color: #ffffff;
-  white-space: pre-wrap;
-`;
-
-const Error = styled.p`
-  font-size: 20px;
-  font-weight: bold;
-  margin-top: 20px;
-  color: red;
-`;
+} from '../redux/selectors/movement';
 
 interface IStateProps {
   outputMovements: string;
@@ -79,7 +53,9 @@ const Mars: React.FC<IStateProps & IDispatchProps> = ({
         Execute robot instructions
       </button>
       <Output>{outputMovements || 'Output will appear here...'}</Output>
-      {outputMovementsError && <Error>{outputMovementsError}</Error>}
+      {outputMovementsError && (
+        <OutputError>{outputMovementsError}</OutputError>
+      )}
     </Container>
   );
 };
