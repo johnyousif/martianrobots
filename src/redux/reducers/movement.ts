@@ -20,12 +20,14 @@ export const movement = (
         outputMovements: getOutputMovementsCompletedAction.outputMovements,
         error: undefined,
       };
+
     case actionTypes.GET_OUTPUT_MOVEMENTS_FAILED:
       const getOutputMovementsFailedAction = action as GetOutputMovementsFailedAction;
       return {
         ...state,
         error: getOutputMovementsFailedAction.error,
       };
+
     default:
       return state;
   }

@@ -7,6 +7,7 @@ export function* getOutputMovementsSaga(action: {
   inputMovements: string;
 }) {
   const { data, error } = yield call(getOutputMovements, action.inputMovements);
+
   if (data) {
     yield put({
       type: actionTypes.GET_OUTPUT_MOVEMENTS_COMPLETED,
