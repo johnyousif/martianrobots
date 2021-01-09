@@ -23,7 +23,7 @@ interface IDispatchProps {
   getOutputMovements: (inputMovements: string) => void;
 }
 
-const Mars: React.FC<IStateProps & IDispatchProps> = ({
+export const Mars: React.FC<IStateProps & IDispatchProps> = ({
   outputMovements,
   outputMovementsError,
   getOutputMovements,
@@ -42,6 +42,7 @@ const Mars: React.FC<IStateProps & IDispatchProps> = ({
   return (
     <Container>
       <InstructionInput
+        className="instruction-input"
         placeholder="Enter input instructions here..."
         onChange={onChangeRobotInstructions}
         value={robotInstructions}
@@ -52,9 +53,11 @@ const Mars: React.FC<IStateProps & IDispatchProps> = ({
       >
         Execute robot instructions
       </button>
-      <Output>{outputMovements || 'Output will appear here...'}</Output>
+      <Output>{outputMovements}</Output>
       {outputMovementsError && (
-        <OutputError>{outputMovementsError}</OutputError>
+        <OutputError className="output-error">
+          {outputMovementsError}
+        </OutputError>
       )}
     </Container>
   );

@@ -1,0 +1,19 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Mars tests should render without errors 1`] = `
+<styled.div>
+  <styled.textarea
+    className="instruction-input"
+    onChange={[Function]}
+    placeholder="Enter input instructions here..."
+    value=""
+  />
+  <button
+    disabled={true}
+    onClick={[Function]}
+  >
+    Execute robot instructions
+  </button>
+  <styled.div />
+</styled.div>
+`;

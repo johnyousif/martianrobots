@@ -2,7 +2,7 @@ import { call, put, takeEvery } from 'redux-saga/effects';
 import { actionTypes } from '../actionTypes';
 import { getOutputMovements } from '../api';
 
-function* getOutputMovementsSaga(action: {
+export function* getOutputMovementsSaga(action: {
   type: string;
   inputMovements: string;
 }) {
